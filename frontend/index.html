@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <title>EventDesk — мероприятия</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="EventDesk — главная">
+        <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 7.5h18v5H7zM7 15h12v5H7zM7 22.5h18v2H7z" fill="currentColor"/><circle cx="24" cy="17.5" r="4" fill="#b7f36b"/></svg></span>
+        <span class="brand-copy"><strong>EventDesk</strong><small>EVENT MANAGEMENT</small></span>
+      </a>
+      <div class="topbar-right">
+        <span class="api-status" id="apiStatus"><span class="status-dot"></span><span id="apiStatusText">Проверяем API…</span></span>
+        <a class="docs-link" href="/docs" target="_blank" rel="noreferrer">API docs <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> ПАНЕЛЬ ОРГАНИЗАТОРА</div>
+          <h1>Мероприятия,<br><em>которые идут по плану.</em></h1>
+          <p class="hero-subtitle">Создавай события, управляй регистрациями и следи за свободными местами — в одном месте.</p>
+          <a class="button button-primary hero-button" href="#create-event">+ Создать мероприятие</a>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+          <div class="art-sun"></div><div class="art-card art-card-back"></div>
+          <div class="art-card art-card-front"><span class="art-pill">UPCOMING EVENT</span><div class="art-day">24<span>ОКТ</span></div><div class="art-lines"><i></i><i></i><i></i></div><div class="art-spark">✳</div></div>
+          <div class="art-chip chip-one">● Seats available</div><div class="art-chip chip-two">Registration open ↗</div>
+        </div>
+      </section>
+
+      <section class="stats-grid" aria-label="Общая статистика">
+        <article class="stat-card"><div class="stat-top"><span>ВСЕ МЕРОПРИЯТИЯ</span><span class="stat-icon violet">▦</span></div><div class="stat-number" id="totalEvents">—</div><div class="stat-caption">В твоём расписании</div></article>
+        <article class="stat-card"><div class="stat-top"><span>РЕГИСТРАЦИИ</span><span class="stat-icon lime">↗</span></div><div class="stat-number" id="totalRegistrations">—</div><div class="stat-caption">Всего участников</div></article>
+        <article class="stat-card"><div class="stat-top"><span>СВОБОДНЫЕ МЕСТА</span><span class="stat-icon blue">◷</span></div><div class="stat-number" id="totalAvailable">—</div><div class="stat-caption">Можно зарегистрироваться</div></article>
+      </section>
+
+      <section class="workspace">
+        <div class="events-section">
+          <div class="section-heading">
+            <div><div class="eyebrow">ТВОЙ КАЛЕНДАРЬ</div><h2>Мероприятия <span class="count-bubble" id="eventCount">0</span></h2></div>
+            <button class="button button-quiet refresh-button" id="refreshButton" type="button"><span aria-hidden="true">↻</span> Обновить</button>
+          </div>
+          <div class="toolbar">
+            <label class="search-box"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Найти по названию или месту…" aria-label="Поиск мероприятий"></label>
+            <select id="sortSelect" aria-label="Сортировка мероприятий"><option value="date">По дате</option><option value="title">По названию</option><option value="available">По свободным местам</option></select>
+          </div>
+          <div id="eventsList" class="events-list" aria-live="polite">
+            <div class="loading-state"><span class="spinner"></span><span>Загружаем мероприятия…</span></div>
+          </div>
+          <div class="footer-note"><span class="footer-dot"></span> Данные загружаются из твоего EventDesk API</div>
+        </div>
+
+        <aside class="create-panel" id="create-event">
+          <div class="panel-heading"><div class="panel-icon">✳</div><div><div class="eyebrow">НОВОЕ СОБЫТИЕ</div><h2>Создать мероприятие</h2></div></div>
+          <p class="panel-description">Заполни основные детали. Остальное можно уточнить позже.</p>
+          <form id="createEventForm" class="form-stack">
+            <label class="field"><span>Название <b>*</b></span><input name="title" required maxlength="200" placeholder="Например, Python Meetup"></label>
+            <label class="field"><span>Место проведения <b>*</b></span><input name="location" required maxlength="2048" placeholder="Город или адрес"></label>
+            <label class="field"><span>Дата и время <b>*</b></span><input name="starts_at" type="datetime-local" required></label>
+            <label class="field"><span>Количество мест <b>*</b></span><input name="capacity" type="number" min="1" step="1" required value="30"></label>
+            <label class="field"><span>Описание <small>необязательно</small></span><textarea name="description" rows="3" maxlength="2048" placeholder="Что ждёт участников?"></textarea></label>
+            <button class="button button-primary submit-button" type="submit"><span>Создать мероприятие</span><span aria-hidden="true">→</span></button>
+            <p class="form-footnote">Поля со звёздочкой обязательны.</p>
+          </form>
+        </aside>
+      </section>
+      <footer class="page-footer"><span>EventDesk <span class="footer-year">/</span> твои события под контролем</span><span>MADE TO BRING PEOPLE TOGETHER</span></footer>
+    </main>
+  </div>
+
+  <dialog id="registrationDialog" class="dialog">
+    <form id="registrationForm" class="dialog-card">
+      <button type="button" class="dialog-close" id="closeRegistration" aria-label="Закрыть">×</button>
+      <div class="eyebrow">УЧАСТИЕ В МЕРОПРИЯТИИ</div>
+      <h2>Зарегистрировать участника</h2>
+      <p class="dialog-event-name" id="registrationEventName"></p>
+      <input type="hidden" name="event_id">
+      <label class="field"><span>Имя участника <b>*</b></span><input name="attendee_name" required maxlength="200" autocomplete="name" placeholder="Как к вам обращаться?"></label>
+      <label class="field"><span>Email <b>*</b></span><input name="attendee_email" type="email" required maxlength="256" autocomplete="email" placeholder="name@example.com"></label>
+      <button class="button button-primary submit-button" type="submit"><span>Подтвердить регистрацию</span><span aria-hidden="true">→</span></button>
+    </form>
+  </dialog>
+
+  <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
