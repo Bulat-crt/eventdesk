@@ -58,11 +58,9 @@ The database enforces uniqueness for the pair `(event_id, attendee_email)`, so a
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/eventdesk.git
+git clone https://github.com/https://github.com/Bulat-crt/eventdesk.git/eventdesk.git
 cd eventdesk
 ```
-
-Replace `<your-username>` with the GitHub account that owns the repository.
 
 ### 2. Create and activate a virtual environment
 
